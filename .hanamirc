@@ -1,0 +1,3 @@
+project=volders_api_challenge
+test=rspec
+template=erb
