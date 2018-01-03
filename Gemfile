@@ -25,6 +25,7 @@ group :test do
   gem 'simplecov', '~> 0.15'
   gem 'cucumber', '~> 3.1'
   gem 'rubocop', '~> 0.52'
+  gem 'rack-test', '~> 0.8'
   gem 'guard-rspec', '~> 4.7'
   gem 'guard', '~> 2.14'
 end
