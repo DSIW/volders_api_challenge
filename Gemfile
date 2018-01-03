@@ -25,6 +25,8 @@ group :test do
   gem 'simplecov', '~> 0.15'
   gem 'cucumber', '~> 3.1'
   gem 'rubocop', '~> 0.52'
+  gem 'guard-rspec', '~> 4.7'
+  gem 'guard', '~> 2.14'
 end
 
 group :production do
