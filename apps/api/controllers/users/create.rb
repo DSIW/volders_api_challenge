@@ -25,20 +25,35 @@ module Api::Controllers::Users
       @repository = repository
     end
 
-    # Creates user with parameters in HTTP body by calling `POST /users`.
+    # Creates user with parameters in HTTP body by calling `POST /users`. The response contains the serialized user.
+    #
+    # It raises an `ValidationError` if parameters are not valid or unique contraint is violated. The middleware
+    # `HttpErrorHandler` generates the corresponding HTTP response.
     #
     # @example
     #   Create.new.call({user: {full_name: 'Max', email: 'max@mustermann.de', password: 'password'}})
     def call(params)
-      if params.valid?
-        user = @repository.create(params[:user])
-
-        self.body = Api::Serializers::ModelSerializer.new(user, [:id, :full_name, :email]).to_json
-        self.status = 201
-      else
-        self.body = Api::Serializers::ValidationErrorSerializer.new(params.errors[:user]).to_json
-        self.status = 422
+      unless params.valid?
+        raise Api::Errors::ValidationError.new(params.errors[:user])
       end
+
+      begin
+        user = @repository.create(params[:user])
+      rescue Hanami::Model::UniqueConstraintViolationError => e
+        add_error(params, :user, :email, 'is already taken')
+        raise Api::Errors::ValidationError.new(params.errors[:user])
+      end
+
+      self.body = Api::Serializers::ModelSerializer.new(user, [:id, :full_name, :email]).to_json
+      self.status = 201
+    end
+
+    private
+
+    def add_error(params, model, attribute, message)
+      params.errors[model] ||= {}
+      params.errors[model][attribute] ||= []
+      params.errors[model][attribute] << message
     end
   end
 end

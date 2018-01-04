@@ -18,6 +18,12 @@ describe Api::Controllers::Users::Create do
     let(:body) { '{"full_name": "Max"}' }
     let(:user) { double(User, full_name: 'Max') }
 
+    before do
+      allow(Api::Serializers::ModelSerializer).to receive(:new)
+        .with(user, [:id, :full_name, :email])
+        .and_return(serializer)
+    end
+
     context 'with valid params' do
       let(:params) do
         { user: {
@@ -28,9 +34,6 @@ describe Api::Controllers::Users::Create do
       end
 
       before do
-        allow(Api::Serializers::ModelSerializer).to receive(:new)
-          .with(user, [:id, :full_name, :email])
-          .and_return(serializer)
         allow(repository).to receive(:create).and_return(user)
       end
 
@@ -59,20 +62,26 @@ describe Api::Controllers::Users::Create do
         } }
       end
 
-      it 'does not create user' do
+      it 'raises an error' do
         expect(repository).not_to receive(:create)
-        action.call(params)
+        expect { action.call(params) }.to raise_error(Api::Errors::ValidationError)
+      end
+    end
+
+    describe 'with existent email' do
+      let(:params) do
+        { user: {
+          'full_name' => 'Max Mustermann',
+          'email' => 'max@mustermann.de',
+          'password' => 'password'
+        } }
       end
 
-      it 'sets status to 422' do
-        expect(action).to receive(:status=).with(422)
-        action.call(params)
-      end
-
-      it 'sets serialized error as body' do
-        body = '{"errors":{"full_name":[{"message":"Full Name should not be empty"}]}}'
-        expect(action).to receive(:body=).with(body)
-        action.call(params)
+      it 'raises an error' do
+        expect(repository).to receive(:create).and_raise Hanami::Model::UniqueConstraintViolationError.new
+        excpetion = Api::Errors::ValidationError.new(nil)
+        expect(Api::Errors::ValidationError).to receive(:new).with({email: ['is already taken']}).and_return(excpetion)
+        expect { action.call(params) }.to raise_error(excpetion)
       end
     end
   end

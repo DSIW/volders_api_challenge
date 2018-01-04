@@ -16,7 +16,7 @@ describe Api::Controllers::Users::Create do
     end
 
     it 'will be persisted' do
-      response = action.call(params)
+      action.call(params)
       expect(repository.count).to eq 1
     end
 
@@ -45,18 +45,32 @@ describe Api::Controllers::Users::Create do
     end
 
     it 'will not be persisted' do
-      response = action.call(params)
+      expect { action.call(params) }.to raise_error(Api::Errors::ValidationError)
       expect(repository.count).to eq 0
     end
+  end
 
-    it 'responds with error message' do
-      response = action.call(params.dup) # NOTE: controller modifies params
-      status, headers, body = response
+  describe 'with existent email' do
+    let(:params) do
+      {'user' => {
+        'full_name' => 'Max Mustermann',
+        'email' => 'max@mustermann.de',
+        'password' => 'password'
+      }}
+    end
 
-      expect(status).to eq 422
+    before do
+      repository.create({
+        full_name: 'Existing user',
+        email: 'max@mustermann.de',
+        password: 'abc'
+      })
+    end
 
-      body = '{"errors":{"full_name":[{"message":"Full Name should not be empty"}]}}'
-      expect(body).to eq body
+    it 'will not be persisted' do
+      expect(repository.count).to eq 1
+      expect { action.call(params) }.to raise_error(Api::Errors::ValidationError) #.new({email: 'is already taken'}))
+      expect(repository.count).to eq 1
     end
   end
 end

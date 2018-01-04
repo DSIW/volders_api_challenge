@@ -3,6 +3,8 @@ Given "I don't have an account" do
 end
 
 When /^perform a request with valid values$/ do
+  @users_count = UserRepository.new.count
+
   header 'Accept', 'application/json'
   header 'Content-Type', 'application/json'
   json = { user: {
@@ -14,6 +16,8 @@ When /^perform a request with valid values$/ do
 end
 
 When /^a request is performed with an empty (.+)$/ do |param|
+  @users_count = UserRepository.new.count
+
   header 'Accept', 'application/json'
   header 'Content-Type', 'application/json'
   json = { user: {
@@ -25,9 +29,23 @@ When /^a request is performed with an empty (.+)$/ do |param|
   post('/users', JSON.dump(json))
 end
 
+When "a request is performed with an existent email" do
+  # Create exitent email
+  UserRepository.new.create(full_name: "Max Mustermann", email: "max@mustermann.de", password: "password")
+  @users_count = UserRepository.new.count
+
+  header 'Accept', 'application/json'
+  header 'Content-Type', 'application/json'
+  json = { user: {
+    full_name: 'Max Mustermann',
+    email: 'max@mustermann.de',
+    password: 'password'
+  } }
+  post('/users', JSON.dump(json))
+end
+
 Then "an account should be created" do
-  expect(UserRepository.new.count).to eq 1
-  expect(UserRepository.new.first.full_name).to eq 'Max Mustermann'
+  expect(UserRepository.new.count).to eq(@users_count+1)
 end
 
 Then /^the status code should be (\d+)$/ do |code|
@@ -35,7 +53,7 @@ Then /^the status code should be (\d+)$/ do |code|
 end
 
 Then "an account should not be created" do
-  expect(UserRepository.new.count).to eq 0
+  expect(UserRepository.new.count).to eq @users_count
 end
 
 Then /^the response should include the "([^"]+)" message$/ do |error_message|

@@ -28,3 +28,9 @@ Feature: Manage users
     When a request is performed with an empty password
     Then an account should not be created
     And the response should include the "Password should not be empty" message
+
+  Scenario: Try creating user with existent email
+    Given I don't have an account
+    When a request is performed with an existent email
+    Then an account should not be created
+    And the response should include the "Email is already taken" message
