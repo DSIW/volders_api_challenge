@@ -13,7 +13,7 @@ When /^perform a request with valid values$/ do
   post('/users', JSON.dump(json))
 end
 
-When /^perform a request with an empty (.+)$/ do |param|
+When /^a request is performed with an empty (.+)$/ do |param|
   header 'Accept', 'application/json'
   header 'Content-Type', 'application/json'
   json = { user: {
@@ -32,4 +32,12 @@ end
 
 Then /^the status code should be (\d+)$/ do |code|
   expect(last_response.status).to eq code.to_i
+end
+
+Then "an account should not be created" do
+  expect(UserRepository.new.count).to eq 0
+end
+
+Then /^the response should include the "([^"]+)" message$/ do |error_message|
+  expect(last_response.body).to match error_message
 end

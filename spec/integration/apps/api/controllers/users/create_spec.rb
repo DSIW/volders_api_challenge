@@ -6,16 +6,14 @@ describe Api::Controllers::Users::Create do
     repository.clear
   end
 
-  let(:valid_params) do
-    {'user' => {
-      'full_name' => 'Max Mustermann',
-      'email' => 'max@mustermann.de',
-      'password' => 'password'
-    }}
-  end
-
   describe 'with valid params' do
-    let(:params) { valid_params }
+    let(:params) do
+      {'user' => {
+        'full_name' => 'Max Mustermann',
+        'email' => 'max@mustermann.de',
+        'password' => 'password'
+      }}
+    end
 
     it 'will be persisted' do
       response = action.call(params)
@@ -34,6 +32,31 @@ describe Api::Controllers::Users::Create do
       expect(json['full_name']).to eq "Max Mustermann"
       expect(json['email']).to eq "max@mustermann.de"
       expect(json).not_to have_key('password')
+    end
+  end
+
+  describe 'with invalid params (empty full_name)' do
+    let(:params) do
+      {'user' => {
+        'full_name' => '',
+        'email' => 'max@mustermann.de',
+        'password' => 'password'
+      }}
+    end
+
+    it 'will not be persisted' do
+      response = action.call(params)
+      expect(repository.count).to eq 0
+    end
+
+    it 'responds with error message' do
+      response = action.call(params.dup) # NOTE: controller modifies params
+      status, headers, body = response
+
+      expect(status).to eq 422
+
+      body = '{"errors":{"full_name":[{"message":"Full Name should not be empty"}]}}'
+      expect(body).to eq body
     end
   end
 end
