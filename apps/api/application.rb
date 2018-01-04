@@ -19,6 +19,7 @@ module Api
       # When you add new directories, remember to add them here.
       #
       load_paths << [
+        'validators',
         'controllers',
         'views'
       ]
