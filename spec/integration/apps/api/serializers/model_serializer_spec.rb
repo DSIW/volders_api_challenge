@@ -1,4 +1,4 @@
-describe Serializer do
+describe Api::Serializers::ModelSerializer do
   let(:serializable_object) { User.new(full_name: "Max", password: "password") }
 
   describe "#to_json" do

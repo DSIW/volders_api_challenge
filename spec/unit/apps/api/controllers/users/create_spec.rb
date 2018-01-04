@@ -1,6 +1,6 @@
 describe Api::Controllers::Users::Create do
   let(:repository) { double('Repository') }
-  let(:serializer) { instance_double(Serializer, to_json: body) }
+  let(:serializer) { instance_double(Api::Serializers::ModelSerializer, to_json: body) }
   let(:body) { '{"full_name": "Max"}' }
   let(:action) { described_class.new(repository) }
 
@@ -20,7 +20,7 @@ describe Api::Controllers::Users::Create do
     let(:user) { double(User, full_name: 'Max') }
 
     before do
-      allow(Serializer).to receive(:new)
+      allow(Api::Serializers::ModelSerializer).to receive(:new)
         .with(user, [:id, :full_name, :email])
         .and_return(serializer)
       allow(repository).to receive(:create).and_return(user)

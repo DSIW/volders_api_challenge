@@ -21,7 +21,7 @@ module Api::Controllers::Users
     def call(params)
       user = @repository.create(params[:user])
 
-      self.body = Serializer.new(user, [:id, :full_name, :email]).to_json
+      self.body = Api::Serializers::ModelSerializer.new(user, [:id, :full_name, :email]).to_json
       self.status = 201
     end
   end

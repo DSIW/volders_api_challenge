@@ -1,4 +1,4 @@
-describe Serializer do
+describe Api::Serializers::ModelSerializer do
   let(:serializable_object) { double('User', name: 'Peter', age: 21, to_h: {name: 'Peter', age: 21}) }
   let(:serializer) { described_class.new(serializable_object) }
   let(:serializer_with_attrs) { described_class.new(serializable_object, [:name]) }
@@ -6,11 +6,11 @@ describe Serializer do
   describe "#new" do
     it 'accepts object' do
       expect(serializable_object).to receive(:to_h)
-      expect(serializer).to be_a Serializer
+      expect(serializer).to be_a described_class
     end
 
     it 'accepts object and attributes' do
-      expect(serializer_with_attrs).to be_a Serializer
+      expect(serializer_with_attrs).to be_a described_class
     end
   end
 
