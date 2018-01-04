@@ -1,5 +1,6 @@
 require 'hanami/helpers'
 require 'hanami/assets'
+require_relative '../../middlewares/http_error_handler'
 
 module Api
   class Application < Hanami::Application
@@ -19,6 +20,7 @@ module Api
       # When you add new directories, remember to add them here.
       #
       load_paths << [
+        'errors',
         'serializers',
         'validators',
         'controllers',
@@ -87,7 +89,7 @@ module Api
 
       # Configure Rack middleware for this application
       #
-      # middleware.use Rack::Protection
+      middleware.use Middlewares::HttpErrorHandler
 
       # Default format for the requests that don't specify an HTTP_ACCEPT header
       # Argument: A symbol representation of a mime type, defaults to :html
