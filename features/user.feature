@@ -34,3 +34,9 @@ Feature: Manage users
     When a request is performed with an existent email
     Then an account should not be created
     And the response should include the "Email is already taken" message
+
+  Scenario: Create user token after creating user
+    Given I don't have an account
+    When an account is created
+    Then a user token should be generated
+    And this token will be used for authentication purposes

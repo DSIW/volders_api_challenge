@@ -33,6 +33,11 @@ describe Api::Controllers::Users::Create do
       expect(json['email']).to eq "max@mustermann.de"
       expect(json).not_to have_key('password')
     end
+
+    it 'assigns a token to user' do
+      action.call(params)
+      expect(repository.first.token.length).to eq 32
+    end
   end
 
   describe 'with invalid params (empty full_name)' do

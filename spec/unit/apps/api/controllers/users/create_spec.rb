@@ -37,8 +37,9 @@ describe Api::Controllers::Users::Create do
         allow(repository).to receive(:create).and_return(user)
       end
 
-      it 'creates user with params' do
-        expect(repository).to receive(:create).with({full_name: 'Max Mustermann', email: 'max@mustermann.de', password: 'password'})
+      it 'creates user with params and assigns a token' do
+        expect(SecureRandom).to receive(:hex).with(16).and_return('abc')
+        expect(repository).to receive(:create).with({full_name: 'Max Mustermann', email: 'max@mustermann.de', password: 'password', token: 'abc'})
         action.call(params)
       end
 

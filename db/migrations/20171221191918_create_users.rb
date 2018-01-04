@@ -6,6 +6,7 @@ Hanami::Model.migration do
       column :full_name, String
       column :email, String, unique: true
       column :password, String
+      column :token, String
     end
   end
 end

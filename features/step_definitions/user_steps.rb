@@ -44,6 +44,17 @@ When "a request is performed with an existent email" do
   post('/users', JSON.dump(json))
 end
 
+When "an account is created" do
+  header 'Accept', 'application/json'
+  header 'Content-Type', 'application/json'
+  json = { user: {
+    full_name: 'Max Mustermann',
+    email: 'max@mustermann.de',
+    password: 'password'
+  } }
+  post('/users', JSON.dump(json))
+end
+
 Then "an account should be created" do
   expect(UserRepository.new.count).to eq(@users_count+1)
 end
@@ -58,4 +69,12 @@ end
 
 Then /^the response should include the "([^"]+)" message$/ do |error_message|
   expect(last_response.body).to match error_message
+end
+
+Then "a user token should be generated" do
+  expect(UserRepository.new.first.token.length).to eq 32
+end
+
+Then "this token will be used for authentication purposes" do
+  # TODO: How should I test this?
 end
