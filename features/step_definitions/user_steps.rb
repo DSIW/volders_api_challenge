@@ -72,7 +72,7 @@ Then /^the response should include the "([^"]+)" message$/ do |error_message|
 end
 
 Then "a user token should be generated" do
-  expect(UserRepository.new.first.token.length).to eq 32
+  expect(UserRepository.new.first.token.length).to be > 32
 end
 
 Then "this token will be used for authentication purposes" do

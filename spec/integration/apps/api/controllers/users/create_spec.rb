@@ -36,7 +36,7 @@ describe Api::Controllers::Users::Create do
 
     it 'assigns a token to user' do
       action.call(params)
-      expect(repository.first.token.length).to eq 32
+      expect(repository.first.token.length).to be > 32
     end
   end
 
@@ -74,7 +74,7 @@ describe Api::Controllers::Users::Create do
 
     it 'will not be persisted' do
       expect(repository.count).to eq 1
-      expect { action.call(params) }.to raise_error(Api::Errors::ValidationError) #.new({email: 'is already taken'}))
+      expect { action.call(params) }.to raise_error(Api::Errors::ValidationError)
       expect(repository.count).to eq 1
     end
   end

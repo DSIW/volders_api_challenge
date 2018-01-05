@@ -16,12 +16,14 @@ describe Api::Controllers::Users::Create do
   describe "#call" do
     let(:serializer) { instance_double(Api::Serializers::ModelSerializer, to_json: body) }
     let(:body) { '{"full_name": "Max"}' }
-    let(:user) { double(User, full_name: 'Max') }
+    let(:user) { instance_double(User, id: 1) }
 
     before do
       allow(Api::Serializers::ModelSerializer).to receive(:new)
         .with(user, [:id, :full_name, :email])
         .and_return(serializer)
+      allow(repository).to receive(:create).and_return(user)
+      allow(repository).to receive(:update).and_return(user)
     end
 
     context 'with valid params' do
@@ -33,13 +35,14 @@ describe Api::Controllers::Users::Create do
         } }
       end
 
-      before do
-        allow(repository).to receive(:create).and_return(user)
-      end
-
-      it 'creates user with params and assigns a token' do
-        expect(SecureRandom).to receive(:hex).with(16).and_return('abc')
-        expect(repository).to receive(:create).with({full_name: 'Max Mustermann', email: 'max@mustermann.de', password: 'password', token: 'abc'})
+      it 'creates user with params and token' do
+        expect(repository).to receive(:create).with({
+          full_name: 'Max Mustermann',
+          email: 'max@mustermann.de',
+          password: 'password'
+        }).and_return(user)
+        expect(TokenUtils).to receive(:generate).with(1, 32).and_return('token')
+        expect(repository).to receive(:update).with(1, token: 'token')
         action.call(params)
       end
 

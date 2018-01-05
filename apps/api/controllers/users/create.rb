@@ -38,8 +38,10 @@ module Api::Controllers::Users
       end
 
       begin
-        params[:user].merge!(token: SecureRandom.hex(Api::Constants::TOKEN_LENGTH / 2))
         user = @repository.create(params[:user])
+
+        token = TokenUtils.generate(user.id, Api::Constants::TOKEN_LENGTH)
+        user = @repository.update(user.id, token: token)
       rescue Hanami::Model::UniqueConstraintViolationError => e
         add_error(params, :user, :email, 'is already taken')
         raise Api::Errors::ValidationError.new(params.errors[:user])
