@@ -13,8 +13,8 @@ module Api::Serializers
     #   User = Struct.new(:name)
     #   user = User.new(name: "Peter")
     #
-    #   Serializer.new(user)
-    #   Serializer.new(user, [:name])
+    #   ModelSerializer.new(user)
+    #   ModelSerializer.new(user, [:name])
     def initialize(obj, attributes = nil)
       @obj = obj
       @attributes = attributes || obj.to_h.keys
@@ -28,12 +28,20 @@ module Api::Serializers
     #   User = Struct.new(:name, :age)
     #   user = User.new(name: "Peter", age: 21)
     #
-    #   Serializer.new(user).to_json #=> `{"name":"Peter","age":21}`
+    #   ModelSerializer.new(user).to_json #=> `{"name":"Peter","age":21}`
     #
-    #   Serializer.new(user, [:name]).to_json #=> `{"name":"Peter"}`
+    #   ModelSerializer.new(user, [:name]).to_json #=> `{"name":"Peter"}`
+    #
+    #   class UserSerializer < ModelSerializer
+    #     def type
+    #       "users"
+    #     end
+    #   end
+    #   UserSerializer.new(user, [:name, :type]).to_json #=> `{"name":"Peter", "type": "users"}`
     def to_json
       filtered_attributes = @attributes.reduce({}) do |hash, attr|
-        hash.merge!(attr => @obj.send(attr))
+        value = self.respond_to?(attr) ? send(attr) : @obj.send(attr)
+        hash.merge!(attr => value)
       end
       JSON.dump(filtered_attributes)
     end
