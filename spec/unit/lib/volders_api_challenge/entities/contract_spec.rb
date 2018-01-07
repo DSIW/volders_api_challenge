@@ -1,5 +1,5 @@
 describe Contract do
-  let(:contract) { described_class.new(vendor: 'Vendor name', starts_on: start_time, ends_on: end_time) }
+  let(:contract) { described_class.new(vendor: 'Vendor name', starts_on: start_time, ends_on: end_time, user_id: 1) }
   let(:start_time) { Time.new(2018, 1, 1) }
   let(:end_time) { Time.new(2019, 1, 1) }
 
@@ -22,6 +22,12 @@ describe Contract do
   describe "#ends_on" do
     it 'returns the end time' do
       expect(contract.ends_on).to eq end_time
+    end
+  end
+
+  describe "#user_id" do
+    it 'returns the user_id' do
+      expect(contract.user_id).to eq 1
     end
   end
 end
