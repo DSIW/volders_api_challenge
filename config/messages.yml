@@ -1,3 +1,7 @@
 en:
   errors:
     present?: should not be empty
+
+    rules:
+      ends_on:
+        gt?: Ends on should be greater than Starts on

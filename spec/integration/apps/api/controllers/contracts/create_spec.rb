@@ -53,6 +53,27 @@ describe Api::Controllers::Contracts::Create do
           expect(json['user_id']).to eq user.id
         end
       end
+
+      describe 'with invalid params (empty vendor)' do
+        let(:params) do
+          {
+            contract: {
+              vendor: '',
+              starts_on: '2018-01-01T00:00:00Z',
+              ends_on: '2019-01-01T00:00:00Z',
+            },
+            'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64([user.id, 'usertoken'].join(':')).chomp}"
+          }
+        end
+
+        it "raises a ValidationError" do
+          expect { action.call(params) }.to raise_error(Api::Errors::ValidationError)
+        end
+
+        it 'contract wont be persisted' do
+          expect(repository.count).to eq 0
+        end
+      end
     end
   end
 end

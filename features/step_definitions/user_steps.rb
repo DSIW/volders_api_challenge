@@ -2,7 +2,7 @@ Given "I don't have an account" do
   UserRepository.new.clear
 end
 
-When /^perform a request with valid values$/ do
+When /^perform a user request with valid values$/ do
   @users_count = UserRepository.new.count
 
   header 'Accept', 'application/json'
@@ -15,7 +15,7 @@ When /^perform a request with valid values$/ do
   post('/users', JSON.dump(json))
 end
 
-When /^a request is performed with an empty (.+)$/ do |param|
+When /^a user request is performed with an empty (.+)$/ do |param|
   @users_count = UserRepository.new.count
 
   header 'Accept', 'application/json'
@@ -29,7 +29,7 @@ When /^a request is performed with an empty (.+)$/ do |param|
   post('/users', JSON.dump(json))
 end
 
-When "a request is performed with an existent email" do
+When "a user request is performed with an existent email" do
   # Create exitent email
   UserRepository.new.create(full_name: "Max Mustermann", email: "max@mustermann.de", password: "password")
   @users_count = UserRepository.new.count

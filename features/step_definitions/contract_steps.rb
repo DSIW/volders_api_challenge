@@ -4,7 +4,7 @@ Given "I have an account" do
   header 'Authorization', "Basic #{Base64.encode64([@current_user.id, 'usertoken'].join(':')).chomp}"
 end
 
-When "a request is performed with valid values" do
+When "a contract request is performed with valid values" do
   @contract_count = ContractRepository.new.count
 
   header 'Accept', 'application/json'
@@ -12,6 +12,33 @@ When "a request is performed with valid values" do
   json = { contract: {
     vendor: 'Cucumber',
     starts_on: '2018-01-01T00:00:00Z',
+    ends_on: '2019-01-01T00:00:00Z'
+  } }
+  post('/contracts', JSON.dump(json))
+end
+
+When /^a contract request is performed with an empty (.+)$/ do |param|
+  @contract_count = ContractRepository.new.count
+
+  header 'Accept', 'application/json'
+  header 'Content-Type', 'application/json'
+  json = { contract: {
+    vendor: 'Cucumber',
+    starts_on: '2018-01-01T00:00:00Z',
+    ends_on: '2019-01-01T00:00:00Z'
+  } }
+  json[:contract][param.to_sym] = ''
+  post('/contracts', JSON.dump(json))
+end
+
+When "a contract request is performed with an ends_on < starts_on" do
+  @contract_count = ContractRepository.new.count
+
+  header 'Accept', 'application/json'
+  header 'Content-Type', 'application/json'
+  json = { contract: {
+    vendor: 'Cucumber',
+    starts_on: '2020-01-01T00:00:00Z',
     ends_on: '2019-01-01T00:00:00Z'
   } }
   post('/contracts', JSON.dump(json))

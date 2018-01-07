@@ -9,6 +9,14 @@ module Api::Controllers::Contracts
     include Api::Action
     include Api::Controllers::Authentication
 
+    params do
+      # FIXME: This should work without it, but unfortunately
+      # Hanami::Validators needs to be configured this way.
+      configure { config.messages_file = 'config/messages.yml' }
+
+      required(:contract).schema(Api::Validators::ContractValidator)
+    end
+
     # Creates a new instance of this controller.
     #
     # @param repository [Hanami::Repository] repository for the persistence
@@ -26,10 +34,15 @@ module Api::Controllers::Contracts
     # It assigns the current authenticated user to the contract.
     #
     # @raise [PermissionDeniedError] if authentication failed
+    # @raise [ValidationError] if parameters are not valid.
     #
     # @example
     #   Create.new.call({contract: {vendor: 'Vendor', starts_on: '2017-01-01T00:00:00Z', ends_on: '2019-01-01T00:00:00'}})
     def call(params)
+      unless params.valid?
+        raise Api::Errors::ValidationError.new(params.errors[:contract])
+      end
+
       contract_params = Hash(params[:contract]).merge(user_id: current_user.id)
       contract = @repository.create(contract_params)
 
