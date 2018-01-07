@@ -41,7 +41,7 @@ describe Api::Controllers::Users::Create do
           email: 'max@mustermann.de',
           password: 'password'
         }).and_return(user)
-        expect(TokenUtils).to receive(:generate).with(1, 32).and_return('token')
+        expect(Token).to receive(:generate).with(1, 32).and_return(double(Token, base64_encoded: 'token'))
         expect(repository).to receive(:update).with(1, token: 'token')
         action.call(params)
       end
