@@ -28,8 +28,13 @@ module Api::Controllers::Contracts
     # @raise [PermissionDeniedError] if authentication failed
     #
     # @example
-    #   Create.new.call({})
+    #   Create.new.call({contract: {vendor: 'Vendor', starts_on: '2017-01-01T00:00:00Z', ends_on: '2019-01-01T00:00:00'}})
     def call(params)
+      contract_params = Hash(params[:contract]).merge(user_id: current_user.id)
+      contract = @repository.create(contract_params)
+
+      self.body = Api::Serializers::ContractSerializer.new(contract).to_json
+      self.status = 201
     end
   end
 end

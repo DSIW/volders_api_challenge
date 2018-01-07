@@ -9,3 +9,8 @@ Feature: Manage contracts
     Then a contract should not be created
     And the status code should be 401
     And the response should include the "Unauthorized" message
+
+  Scenario: Create valid contract
+    Given I have an account
+    When a request is performed with valid values
+    Then a contract should be created
