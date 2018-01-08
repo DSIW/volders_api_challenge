@@ -22,6 +22,8 @@ module Api::Serializers
     private
 
     def serialized_errors
+      return [] if @errors.nil?
+
       @errors.reduce({}) do |hash, (attr, error_messages)|
         human_attr = humanize(attr)
         messages = error_messages.map do |error_message|
