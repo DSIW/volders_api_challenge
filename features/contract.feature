@@ -43,3 +43,9 @@ Feature: Manage contracts
     Given I have an account
     When a request is performed to a contract that belongs to me
     Then I should see all the contract available fields
+
+  Scenario: Prevent information leaking of contracts from other users
+    Given I have an account
+    When a request is performed to a contract that does not belong to me
+    Then the status code should be 404
+    And I should see "Contract not found" error to prevent information leaking

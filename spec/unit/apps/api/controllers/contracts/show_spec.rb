@@ -33,9 +33,14 @@ describe Api::Controllers::Contracts::Show do
       let(:params) { {id: 1} }
 
       it 'fetches contract with id and user_id' do
-        expect(repository).to receive(:find_by_id_and_user_id).with(1, 2)
-        allow(Api::Serializers::ContractSerializer).to receive(:new).and_return(double(to_json: 'JSON'))
+        expect(repository).to receive(:find_by_id_and_user_id).with(1, 2).and_return(contract)
+        allow(Api::Serializers::ContractSerializer).to receive(:new).with(contract).and_return(double(to_json: 'JSON'))
         action.call(params)
+      end
+
+      it 'raises NotFoundError if contract was not found' do
+        expect(repository).to receive(:find_by_id_and_user_id).and_return(nil)
+        expect { action.call(params) }.to raise_error(Api::Errors::NotFoundError)
       end
 
       it 'body= is called with serialized contract' do

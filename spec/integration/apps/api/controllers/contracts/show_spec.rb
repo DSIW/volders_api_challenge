@@ -1,6 +1,8 @@
 describe Api::Controllers::Contracts::Show do
   let!(:user) { UserRepository.new.create(full_name: 'Max Mustermann', token: 'usertoken') }
+  let!(:other_user) { UserRepository.new.create(full_name: 'Max Mustermann', token: 'otherusertoken') }
   let!(:contract) { ContractRepository.new.create(vendor: 'Vodafone', user_id: user.id) }
+  let!(:other_contract) { ContractRepository.new.create(vendor: 'Vodafone', user_id: other_user.id) }
 
   let(:repository) { ContractRepository.new }
   let(:action) { described_class.new(repository) }
@@ -41,6 +43,32 @@ describe Api::Controllers::Contracts::Show do
             'ends_on' => nil,
             'user_id' => user.id
           })
+        end
+      end
+
+      describe 'with invalid id' do
+        let(:params) do
+          {
+            id: 0,
+            'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64([user.id, 'usertoken'].join(':')).chomp}"
+          }
+        end
+
+        it "raises a NotFoundError" do
+          expect { action.call(params) }.to raise_error(Api::Errors::NotFoundError)
+        end
+      end
+
+      describe 'with other user_id' do
+        let(:params) do
+          {
+            id: other_contract.id,
+            'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64([user.id, 'usertoken'].join(':')).chomp}"
+          }
+        end
+
+        it "raises a NotFoundError" do
+          expect { action.call(params) }.to raise_error(Api::Errors::NotFoundError)
         end
       end
     end

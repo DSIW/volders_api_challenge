@@ -20,10 +20,14 @@ module Api::Controllers::Contracts
     # Fetch one contract with specified id from database. The response contains the serialized
     # contract.
     #
+    # @raise [NotFoundError] if your are not the owner of this contract
+    #
     # @example
     #   Show.new.call({id: '1'})
     def call(params)
       contract = @repository.find_by_id_and_user_id(params[:id], current_user.id)
+
+      raise Api::Errors::NotFoundError, 'Contract' unless contract
 
       self.body = Api::Serializers::ContractSerializer.new(contract).to_json
       self.status = 200

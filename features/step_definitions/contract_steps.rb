@@ -66,3 +66,16 @@ Then /^I should see all the contract available fields$/ do
   expect(contract['id']).to eq @contract.id
   expect(contract['user_id']).to eq @current_user.id
 end
+
+When /^a request is performed to a contract that does not belong to me$/ do
+  other_user = UserRepository.new.create(full_name: 'Other user')
+  contract = ContractRepository.new.create(vendor: 'Vodafone', user_id: other_user.id)
+
+  header 'Accept', 'application/json'
+  header 'Content-Type', 'application/json'
+  get("/contracts/#{contract.id}")
+end
+
+Then /^I should see "([^"]*)" error to prevent information leaking$/ do |error|
+  expect(last_response.body).to include "Contract not found"
+end
