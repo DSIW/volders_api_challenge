@@ -23,8 +23,7 @@ module Api
         'errors',
         'serializers',
         'validators',
-        'controllers',
-        'views'
+        'controllers'
       ]
 
       # Handle exceptions with HTTP statuses (true) or don't catch them (false).
@@ -60,33 +59,6 @@ module Api
       #
       # port 443
 
-      # Enable cookies
-      # Argument: boolean to toggle the feature
-      #           A Hash with options
-      #
-      # Options:
-      #   :domain   - The domain (String - nil by default, not required)
-      #   :path     - Restrict cookies to a relative URI
-      #               (String - nil by default)
-      #   :max_age  - Cookies expiration expressed in seconds
-      #               (Integer - nil by default)
-      #   :secure   - Restrict cookies to secure connections
-      #               (Boolean - Automatically true when using HTTPS)
-      #               See #scheme and #ssl?
-      #   :httponly - Prevent JavaScript access (Boolean - true by default)
-      #
-      # cookies true
-      # or
-      # cookies max_age: 300
-
-      # Enable sessions
-      # Argument: Symbol the Rack session adapter
-      #           A Hash with options
-      #
-      # See: http://www.rubydoc.info/gems/rack/Rack/Session/Cookie
-      #
-      # sessions :cookie, secret: ENV['API_SESSIONS_SECRET']
-
       # Configure Rack middleware for this application
       #
       middleware.use Middlewares::HttpErrorHandler
@@ -113,56 +85,6 @@ module Api
       # it redirects to the secure equivalent (https). Disabled by default.
       #
       # force_ssl true
-
-      ##
-      # TEMPLATES
-      #
-
-      # The layout to be used by all views
-      #
-      layout :application # It will load Api::Views::ApplicationLayout
-
-      # The relative path to templates
-      #
-      templates 'templates'
-
-      ##
-      # ASSETS
-      #
-      assets do
-        # JavaScript compressor
-        #
-        # Supported engines:
-        #
-        #   * :builtin
-        #   * :uglifier
-        #   * :yui
-        #   * :closure
-        #
-        # See: http://hanamirb.org/guides/assets/compressors
-        #
-        # In order to skip JavaScript compression comment the following line
-        javascript_compressor :builtin
-
-        # Stylesheet compressor
-        #
-        # Supported engines:
-        #
-        #   * :builtin
-        #   * :yui
-        #   * :sass
-        #
-        # See: http://hanamirb.org/guides/assets/compressors
-        #
-        # In order to skip stylesheet compression comment the following line
-        stylesheet_compressor :builtin
-
-        # Specify sources for assets
-        #
-        sources << [
-          'assets'
-        ]
-      end
 
       ##
       # SECURITY
@@ -266,15 +188,6 @@ module Api
         # include MyAuthentication # included in all the actions
         # before :authenticate!    # run an authentication before callback
       end
-
-      # Configure the code that will yield each time Api::View is included
-      # This is useful for sharing common functionality
-      #
-      # See: http://www.rubydoc.info/gems/hanami-view#Configuration
-      view.prepare do
-        include Hanami::Helpers
-        include Api::Assets::Helpers
-      end
     end
 
     ##
@@ -300,31 +213,6 @@ module Api
       # scheme 'https'
       # host   'example.org'
       # port   443
-
-      assets do
-        # Don't compile static assets in production mode (eg. Sass, ES6)
-        #
-        # See: http://www.rubydoc.info/gems/hanami-assets#Configuration
-        compile false
-
-        # Use fingerprint file name for asset paths
-        #
-        # See: http://hanamirb.org/guides/assets/overview
-        fingerprint true
-
-        # Content Delivery Network (CDN)
-        #
-        # See: http://hanamirb.org/guides/assets/content-delivery-network
-        #
-        # scheme 'https'
-        # host   'cdn.example.org'
-        # port   443
-
-        # Subresource Integrity
-        #
-        # See: http://hanamirb.org/guides/assets/content-delivery-network/#subresource-integrity
-        subresource_integrity :sha256
-      end
     end
   end
 end
