@@ -71,7 +71,7 @@ A more general approach would be: A contract vendor could be a separate Entity f
 ```
 
 
-## Setup
+## Setup and testing
 
 Install all dependencies
 
@@ -105,7 +105,7 @@ Some improvements are possible:
 
 * Use [hanami-serializer](https://github.com/davydovanton/hanami-serializer) for serializing the entities
 * The Serializer in the controller actions could be dependency injected.
-* The output of the entities could be wrapped by the entity name e.g. `{user: {}}`.
+* The serialization of the entities could be wrapped by the entity name e.g. `{user: {}}`.
 * Add `created_at` and `updated_at` field for caching purposes.
 * Password should be hashed with bcrypt before it is stored in database.
 * Extraction of controller actions to service objects to separate the business logic and the HTTP layer.
