@@ -21,6 +21,11 @@ describe Api::Serializers::ModelSerializer do
   end
 
   describe "#to_json" do
+    it 'renders {} if nil object' do
+      expect(JSON).to receive(:dump).with({}) { '{}' }
+      expect(described_class.new(nil).to_json).to eq '{}'
+    end
+
     it 'renders attributes to JSON' do
       expect(JSON).to receive(:dump).with({name: 'Peter'}) { 'Name' }
       expect(serializer_with_attrs.to_json).to eq 'Name'

@@ -15,6 +15,13 @@ describe Api::Serializers::ModelSerializer do
       end
     end
 
+    describe 'when nil will be serialized' do
+      it 'returns {}' do
+        serializer = described_class.new(nil)
+        expect(serializer.to_json).to eq '{}'
+      end
+    end
+
     describe 'when arguments are specified' do
       it 'renders specified attributes' do
         serializer_with_attrs = described_class.new(serializable_object, [:full_name])

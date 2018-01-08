@@ -25,6 +25,9 @@ module Api::Serializers
     # @return [String] JSON representation of obj
     #
     # @example
+    #   ModelSerializer.new(nil).to_json #=> `{}`
+    #
+    # @example
     #   User = Struct.new(:name, :age)
     #   user = User.new(name: "Peter", age: 21)
     #
@@ -39,11 +42,22 @@ module Api::Serializers
     #   end
     #   UserSerializer.new(user, [:name, :type]).to_json #=> `{"name":"Peter", "type": "users"}`
     def to_json
-      filtered_attributes = @attributes.reduce({}) do |hash, attr|
-        value = self.respond_to?(attr) ? send(attr) : @obj.send(attr)
+      JSON.dump(filtered_attributes)
+    end
+
+    private
+
+    def filtered_attributes
+      return {} if @obj.nil?
+
+      @attributes.reduce({}) do |hash, attr|
+        if respond_to?(attr)
+          value = send(attr)
+        elsif @obj.respond_to?(attr)
+          value = @obj.send(attr)
+        end
         hash.merge!(attr => value)
       end
-      JSON.dump(filtered_attributes)
     end
   end
 end
