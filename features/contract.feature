@@ -49,3 +49,16 @@ Feature: Manage contracts
     When a request is performed to a contract that does not belong to me
     Then the status code should be 404
     And I should see "Contract not found" error to prevent information leaking
+
+  Scenario: Delete contract
+    Given I have an account
+    When a delete request is performed to a contract that belongs to me
+    Then the contract should be deleted
+    And the status code should be 200
+
+  Scenario: Prevent deletion of contracts from other users
+    Given I have an account
+    When a delete request is performed to a contract that does not belong to me
+    Then the contract should not be deleted
+    And the status code should be 404
+    And I should see "Contract not found" error to prevent information leaking

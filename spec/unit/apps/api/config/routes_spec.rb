@@ -44,4 +44,13 @@ RSpec.describe Api.routes do
     expect(route.verb).to   eq 'GET'
     expect(route.params).to eq({id: '1'})
   end
+
+  it 'recognizes "DELETE /contracts/1"' do
+    env = Rack::MockRequest.env_for('/contracts/1', method: 'DELETE')
+    route = described_class.recognize(env)
+
+    expect(route.path).to   eq '/contracts/1'
+    expect(route.verb).to   eq 'DELETE'
+    expect(route.params).to eq({id: '1'})
+  end
 end

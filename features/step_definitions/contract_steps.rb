@@ -76,6 +76,35 @@ When /^a request is performed to a contract that does not belong to me$/ do
   get("/contracts/#{contract.id}")
 end
 
+When /^a delete request is performed to a contract that belongs to me$/ do
+  contract = ContractRepository.new.create(vendor: 'Vodafone', user_id: @current_user.id)
+
+  @contract_count = ContractRepository.new.count
+
+  header 'Accept', 'application/json'
+  header 'Content-Type', 'application/json'
+  delete("/contracts/#{contract.id}")
+end
+
+When /^a delete request is performed to a contract that does not belong to me$/ do
+  other_user = UserRepository.new.create(full_name: 'User')
+  contract = ContractRepository.new.create(vendor: 'Vodafone', user_id: other_user.id)
+
+  @contract_count = ContractRepository.new.count
+
+  header 'Accept', 'application/json'
+  header 'Content-Type', 'application/json'
+  delete("/contracts/#{contract.id}")
+end
+
 Then /^I should see "([^"]*)" error to prevent information leaking$/ do |error|
   expect(last_response.body).to include "Contract not found"
+end
+
+Then /^the contract should be deleted$/ do
+  expect(ContractRepository.new.count).to eq(@contract_count-1)
+end
+
+Then /^the contract should not be deleted$/ do
+  expect(ContractRepository.new.count).to eq @contract_count
 end
