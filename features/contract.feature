@@ -38,3 +38,8 @@ Feature: Manage contracts
     When a contract request is performed with an ends_on < starts_on
     Then a contract should not be created
     And the response should include the "Ends on should be greater than Starts on" message
+
+  Scenario: Show contract of user with valid authentication
+    Given I have an account
+    When a request is performed to a contract that belongs to me
+    Then I should see all the contract available fields

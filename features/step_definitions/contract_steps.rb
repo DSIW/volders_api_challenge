@@ -51,3 +51,18 @@ end
 Then "a contract should not be created" do
   expect(ContractRepository.new.count).to eq @contract_count
 end
+
+When /^a request is performed to a contract that belongs to me$/ do
+  @contract = ContractRepository.new.create(vendor: 'Vodafone', user_id: @current_user.id)
+
+  header 'Accept', 'application/json'
+  header 'Content-Type', 'application/json'
+  get("/contracts/#{@contract.id}")
+end
+
+Then /^I should see all the contract available fields$/ do
+  contract = JSON.parse(last_response.body)
+  expect(contract.keys).to match ['id', 'vendor', 'starts_on', 'ends_on', 'user_id']
+  expect(contract['id']).to eq @contract.id
+  expect(contract['user_id']).to eq @current_user.id
+end
