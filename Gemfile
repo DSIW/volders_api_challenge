@@ -18,16 +18,16 @@ end
 group :test, :development do
   gem 'dotenv', '~> 2.0'
   gem 'pry', '~> 0.11'
+  gem 'guard', '~> 2.14'
+  gem 'guard-rspec', '~> 4.7'
+  gem 'guard-cucumber', '~> 2.1'
+  gem 'rubocop', '~> 0.52'
 end
 
 group :test do
   gem 'rspec'
   gem 'simplecov', '~> 0.15'
-  gem 'rubocop', '~> 0.52'
   gem 'rack-test', '~> 0.8'
-  gem 'guard', '~> 2.14'
-  gem 'guard-rspec', '~> 4.7'
-  gem 'guard-cucumber', '~> 2.1'
   gem 'cucumber', '~> 2.4' # 2.X is required by guard-cucumber
 end
 
