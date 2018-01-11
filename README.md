@@ -110,3 +110,4 @@ Some improvements are possible:
 * Password should be hashed with bcrypt before it is stored in database.
 * Extraction of controller actions to service objects to separate the business logic and the HTTP layer.
 * Email format validation
+* Versioning via Accept-Header: `application/vnd.app.v1+json`
